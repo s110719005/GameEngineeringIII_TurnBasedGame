@@ -15,6 +15,7 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	this->SetActorLocation(FVector(400, 200, 100));
 	
 }
 
