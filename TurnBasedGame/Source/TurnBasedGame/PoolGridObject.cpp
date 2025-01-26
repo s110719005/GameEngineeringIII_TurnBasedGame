@@ -12,7 +12,7 @@ APoolGridObject::APoolGridObject()
 void APoolGridObject::SetActive(bool i_isActive)
 {
 	isActive = i_isActive;
-	//SetActorHiddenInGame(i_isActive);
+	SetActorHiddenInGame(!i_isActive);
 }
 
 void APoolGridObject::SetLifeSpan(float i_lifeTime)

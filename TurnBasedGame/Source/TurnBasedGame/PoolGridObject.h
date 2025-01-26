@@ -32,6 +32,7 @@ public:
 	int GetGridIndexX();
 	int GetGridIndexY();
 
+
 protected:
 	bool isActive;
 	float lifeSpan = 0.0f;

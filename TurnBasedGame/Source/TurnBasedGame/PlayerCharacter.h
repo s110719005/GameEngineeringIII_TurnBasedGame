@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GridPool.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -23,6 +24,13 @@ protected:
 	void MoveBackward();
 	void MoveRight();
 	void MoveLeft();
+	bool CheckNextMove(int i_x, int i_y);
+
+	UGridPool* gridReference;
+	int gridX;
+	int gridY;
+	FVector nextLocation;
+
 
 public:	
 	// Called every frame
@@ -31,4 +39,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere, Category = "Grid")
+	AActor* gridActor;
 };

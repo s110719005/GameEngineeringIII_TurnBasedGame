@@ -22,6 +22,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Object Pool")
 	TSubclassOf<class APoolGridObject> pooledObjectSubclass;
+	
+	UPROPERTY(EditAnywhere, Category = "Object Pool")
+	TSubclassOf<class APoolGridObject> pooledObstacleSubclass;
 
 	UPROPERTY(EditAnywhere, Category = "Object Pool")
 	int gridSizeX;
@@ -35,6 +38,8 @@ public:
 	UFUNCTION()
 	void OnGridHit(APoolGridObject* gridActor);
 
+	TArray<TArray<APoolGridObject*>> GetGrid();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;	
@@ -42,4 +47,5 @@ protected:
 	TArray<APoolGridObject*> ObjectPool;
 	TArray<int> SpawnedPoolIndex;
 	TArray<TArray<APoolGridObject*>> grid;
+	TArray<TArray<APoolGridObject*>> obstacle;
 };
