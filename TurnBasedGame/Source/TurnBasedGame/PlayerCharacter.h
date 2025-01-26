@@ -7,6 +7,19 @@
 #include "GridPool.h"
 #include "PlayerCharacter.generated.h"
 
+class Command
+{
+public:
+	int moveX;
+	int moveY;
+	Command(int x, int y)
+	{
+		moveX = x;
+		moveY = y;
+	}
+};
+
+
 UCLASS()
 class TURNBASEDGAME_API APlayerCharacter : public ACharacter
 {
@@ -24,12 +37,16 @@ protected:
 	void MoveBackward();
 	void MoveRight();
 	void MoveLeft();
+	void Undo();
+	void Redo();
+	void MovePlayer(int i_x, int i_y);
 	bool CheckNextMove(int i_x, int i_y);
 
 	UGridPool* gridReference;
 	int gridX;
 	int gridY;
-	FVector nextLocation;
+	TArray<Command> currentCommands;
+	TArray<Command> undoCommands;
 
 
 public:	

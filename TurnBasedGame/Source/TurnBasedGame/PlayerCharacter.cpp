@@ -4,6 +4,8 @@
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
+
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -36,28 +38,57 @@ void APlayerCharacter::MoveForward()
 {
 	if (!CheckNextMove(1, 0)) { return; }
 	UE_LOG(LogTemp, Warning, TEXT("MOVE FORWARD"));
-	//this->SetActorLocation(this->GetActorLocation() + FVector(100.0f, 0, 0));
+	undoCommands.Empty();
 }
 
 void APlayerCharacter::MoveBackward()
 {
 	if (!CheckNextMove(-1, 0)) { return; }
 	UE_LOG(LogTemp, Warning, TEXT("MOVE BACKWARD"));
-	//this->SetActorLocation(this->GetActorLocation() + FVector(-100.0f, 0, 0));
+	undoCommands.Empty();
 }
 
 void APlayerCharacter::MoveRight()
 {
 	if (!CheckNextMove(0, 1)) { return; }
 	UE_LOG(LogTemp, Warning, TEXT("MOVE RIGHT"));
-	//this->SetActorLocation(this->GetActorLocation() + FVector(0, 100, 0));
+	undoCommands.Empty();
 }
 
 void APlayerCharacter::MoveLeft()
 {
 	if (!CheckNextMove(0, -1)) { return; }
 	UE_LOG(LogTemp, Warning, TEXT("MOVE LEFT"));
-	//this->SetActorLocation(this->GetActorLocation() + FVector(0, -100, 0));
+	undoCommands.Empty();
+}
+
+void APlayerCharacter::Undo()
+{
+	if (currentCommands.Num() >= 1)
+	{
+		Command newCommand = Command(gridX, gridY);
+		undoCommands.Add(newCommand);
+		MovePlayer(currentCommands.Last().moveX, currentCommands.Last().moveY);
+		currentCommands.Pop();
+	}
+}
+
+void APlayerCharacter::Redo()
+{
+	if (undoCommands.Num() >= 1)
+	{
+		Command newCommand = Command(gridX, gridY);
+		currentCommands.Add(newCommand);
+		MovePlayer(undoCommands.Last().moveX, undoCommands.Last().moveY);
+		undoCommands.Pop();
+	}
+}
+
+void APlayerCharacter::MovePlayer(int i_x, int i_y)
+{
+	gridX = i_x;
+	gridY = i_y;
+	this->SetActorLocation(FVector(100 * i_x, 100 * i_y, 50));
 }
 
 bool APlayerCharacter::CheckNextMove(int i_x, int i_y)
@@ -75,10 +106,11 @@ bool APlayerCharacter::CheckNextMove(int i_x, int i_y)
 			}
 			else
 			{
-				nextLocation = FVector(100 * x, 100 * y, 50);
-				gridX = x;
-				gridY = y;
-				this->SetActorLocation(nextLocation);
+				//move player
+				Command newCommand = Command(gridX, gridY);
+				currentCommands.Add(newCommand);
+				UE_LOG(LogTemp, Warning, TEXT("ADD COMMAND: %d, %d"), gridX, gridY);
+				MovePlayer(x, y);
 				return true;
 			}
 		}
@@ -111,5 +143,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("MoveRight", IE_Pressed, this, &APlayerCharacter::MoveRight);
 	PlayerInputComponent->BindAction("MoveLeft", IE_Pressed, this, &APlayerCharacter::MoveLeft);
 
+	//TODO: bind U and R
+	PlayerInputComponent->BindAction("Undo", IE_Pressed, this, &APlayerCharacter::Undo);
+	PlayerInputComponent->BindAction("Redo", IE_Pressed, this, &APlayerCharacter::Redo);
 }
 
