@@ -18,6 +18,30 @@ void APlayerCharacter::BeginPlay()
 	
 }
 
+void APlayerCharacter::MoveForward()
+{
+	UE_LOG(LogTemp, Warning, TEXT("MOVE FORWARD"));
+	this->SetActorLocation(this->GetActorLocation() + FVector(100.0f, 0, 0));
+}
+
+void APlayerCharacter::MoveBackward()
+{
+	UE_LOG(LogTemp, Warning, TEXT("MOVE BACKWARD"));
+	this->SetActorLocation(this->GetActorLocation() + FVector(-100.0f, 0, 0));
+}
+
+void APlayerCharacter::MoveRight()
+{
+	UE_LOG(LogTemp, Warning, TEXT("MOVE RIGHT"));
+	this->SetActorLocation(this->GetActorLocation() + FVector(0, 100, 0));
+}
+
+void APlayerCharacter::MoveLeft()
+{
+	UE_LOG(LogTemp, Warning, TEXT("MOVE LEFT"));
+	this->SetActorLocation(this->GetActorLocation() + FVector(0, -100, 0));
+}
+
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
@@ -29,6 +53,13 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	//ME: thing inside"" should be set in edit/projectsettings/input Action binding
+	//PlayerInputComponent->BindAction("Forward", IE_Pressed, this, &ACharacter::SetActorLocation(this->GetActorLocation() + FVector(1, 0, 0))
+	PlayerInputComponent->BindAction("MoveForward", IE_Pressed, this, &APlayerCharacter::MoveForward);
+	PlayerInputComponent->BindAction("MoveBackWard", IE_Pressed, this, &APlayerCharacter::MoveBackward);
+	PlayerInputComponent->BindAction("MoveRight", IE_Pressed, this, &APlayerCharacter::MoveRight);
+	PlayerInputComponent->BindAction("MoveLeft", IE_Pressed, this, &APlayerCharacter::MoveLeft);
 
 }
 
