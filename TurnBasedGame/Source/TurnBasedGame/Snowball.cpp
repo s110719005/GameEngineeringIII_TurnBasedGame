@@ -67,6 +67,14 @@ void ASnowball::GrowSnowBall()
 	this->SetActorScale3D(this->GetActorScale() + FVector(0.3f, 0.3f, 0.3f));
 }
 
+void ASnowball::ReActivateSnowball(int i_x, int i_y)
+{
+	gridX = i_x;
+	gridY = i_y;
+	gridReference->AddSnowball(gridX, gridY, this);
+	//SetActorHiddenInGame(true);
+}
+
 int ASnowball::GridX()
 {
 	return gridX;

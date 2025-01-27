@@ -27,6 +27,7 @@ public:
 	bool CheckCanMove(int i_x, int i_y);
 	ASnowball* Move(int i_x, int i_y);
 	void GrowSnowBall();
+	void ReActivateSnowball(int i_x, int i_y);
 	int GridX();
 	int GridY();
 

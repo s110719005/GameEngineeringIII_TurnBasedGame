@@ -92,6 +92,11 @@ void APlayerCharacter::Undo()
 		if (lastCommand.hiddenSnowball != nullptr)
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("TRY UNDO HIDDEN SNOWBALL"));
+			if (lastCommand.hiddenSnowball->IsHidden())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("REACTIVATE AT: %d, %d"), ballX, ballY);
+				lastCommand.hiddenSnowball->ReActivateSnowball(ballX, ballY);
+			}
 			lastCommand.hiddenSnowball->SetActorHiddenInGame(!lastCommand.hiddenSnowball->IsHidden());
 			if (lastCommand.movingSnowball != nullptr)
 			{
@@ -133,6 +138,11 @@ void APlayerCharacter::Redo()
 		if (lastCommand.hiddenSnowball != nullptr)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("TRY REDO HIDDEN SNOWBALL"));
+			if (lastCommand.hiddenSnowball->IsHidden())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("REACTIVATE AT: %d, %d"), ballX, ballY);
+				lastCommand.hiddenSnowball->ReActivateSnowball(ballX, ballY);
+			}
 			lastCommand.hiddenSnowball->SetActorHiddenInGame(!lastCommand.hiddenSnowball->IsHidden());
 			if (lastCommand.movingSnowball != nullptr)
 			{
