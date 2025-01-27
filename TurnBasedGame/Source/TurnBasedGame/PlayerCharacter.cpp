@@ -66,9 +66,43 @@ void APlayerCharacter::Undo()
 {
 	if (currentCommands.Num() >= 1)
 	{
-		Command newCommand = Command(gridX, gridY);
+		Command newCommand;
+		Command lastCommand;
+		Command lastTwoCommand;
+		lastCommand = currentCommands.Last();
+		int ballX = 0;
+		int ballY = 0;
+		if (lastCommand.movingSnowball != nullptr)
+		{
+			ballX = lastCommand.movingSnowball->GridX();
+			ballY = lastCommand.movingSnowball->GridY();
+		}
+		newCommand = Command(gridX, gridY, 
+							 lastCommand.hiddenSnowball, lastCommand.movingSnowball,
+							 ballX, ballY,
+							 lastCommand.movingSnowballSize);
 		undoCommands.Add(newCommand);
-		MovePlayer(currentCommands.Last().moveX, currentCommands.Last().moveY);
+		MovePlayer(lastCommand.moveX, lastCommand.moveY);
+		if (lastCommand.movingSnowball != nullptr)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("TRY UNDO MOVING SNOWBALL"));
+			UE_LOG(LogTemp, Warning, TEXT("UNDO MOVING BALL TO: %d, %d"), lastCommand.snowballMoveX, lastCommand.snowballMoveY);
+			lastCommand.movingSnowball->Move(lastCommand.snowballMoveX, lastCommand.snowballMoveY);
+		}
+		if (lastCommand.hiddenSnowball != nullptr)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("TRY UNDO HIDDEN SNOWBALL"));
+			if (lastCommand.hiddenSnowball->IsHidden())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("REACTIVATE AT: %d, %d"), ballX, ballY);
+				lastCommand.hiddenSnowball->ReActivateSnowball(ballX, ballY);
+			}
+			lastCommand.hiddenSnowball->SetActorHiddenInGame(!lastCommand.hiddenSnowball->IsHidden());
+			if (lastCommand.movingSnowball != nullptr)
+			{
+				lastCommand.movingSnowball->SetActorScale3D(lastCommand.movingSnowballSize - FVector(0.3f, 0.3f, 0.3f));
+			}
+		}
 		currentCommands.Pop();
 	}
 }
@@ -77,9 +111,44 @@ void APlayerCharacter::Redo()
 {
 	if (undoCommands.Num() >= 1)
 	{
-		Command newCommand = Command(gridX, gridY);
+		Command newCommand;
+		Command lastCommand;
+		lastCommand = undoCommands.Last();
+		int ballX = 0;
+		int ballY = 0;
+		if (lastCommand.movingSnowball != nullptr)
+		{
+			ballX = lastCommand.movingSnowball->GridX();
+			ballY = lastCommand.movingSnowball->GridY();
+		}
+		
+		newCommand = Command(gridX, gridY,
+							 lastCommand.hiddenSnowball, lastCommand.movingSnowball,
+							 ballX, ballY,
+							 lastCommand.movingSnowballSize);
+		UE_LOG(LogTemp, Warning, TEXT("ADD REDO MOVING BALL: %d, %d"), newCommand.snowballMoveX, newCommand.snowballMoveY);
+		
 		currentCommands.Add(newCommand);
-		MovePlayer(undoCommands.Last().moveX, undoCommands.Last().moveY);
+		MovePlayer(lastCommand.moveX, lastCommand.moveY);
+		if (lastCommand.movingSnowball != nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TRY REDO MOVING SNOWBALL"));
+			lastCommand.movingSnowball->Move(lastCommand.snowballMoveX, lastCommand.snowballMoveY);
+		}
+		if (lastCommand.hiddenSnowball != nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TRY REDO HIDDEN SNOWBALL"));
+			if (lastCommand.hiddenSnowball->IsHidden())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("REACTIVATE AT: %d, %d"), ballX, ballY);
+				lastCommand.hiddenSnowball->ReActivateSnowball(ballX, ballY);
+			}
+			lastCommand.hiddenSnowball->SetActorHiddenInGame(!lastCommand.hiddenSnowball->IsHidden());
+			if (lastCommand.movingSnowball != nullptr)
+			{
+				lastCommand.movingSnowball->SetActorScale3D(lastCommand.movingSnowballSize + FVector(0.3f, 0.3f, 0.3f));
+			}
+		}
 		undoCommands.Pop();
 	}
 }
@@ -99,15 +168,31 @@ bool APlayerCharacter::CheckNextMove(int i_x, int i_y)
 		int y = gridY + i_y;
 		if (x < gridReference->gridSizeY && y < gridReference->gridSizeX && x >= 0 && y >= 0)
 		{
+			ASnowball* nextGridSnowball = gridReference->GetGrid()[x][y]->GetSnowball();
 			if (gridReference->GetGrid()[x][y]->IsBlocked()) 
 			{ 
 				UE_LOG(LogTemp, Warning, TEXT("BLOCKED!"));
 				return false; 
 			}
+			else if (nextGridSnowball != nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("HAS BALL"));
+				if (gridReference->CheckSnowball(x, y, i_x, i_y))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("MOVE BOTH"));
+					ASnowball* willHitSnowball = nextGridSnowball->Move(x + i_x , y + i_y);
+					UE_LOG(LogTemp, Warning, TEXT("ADD COMMAND: player: %d, %d, snowball: %d, %d"), gridX, gridY, x, y);
+					Command newCommand = Command(gridX, gridY, willHitSnowball, nextGridSnowball, x, y, nextGridSnowball->GetActorScale3D());
+					currentCommands.Add(newCommand);
+					MovePlayer(x, y);
+					return true;
+				}
+				else { return false; }
+			}
 			else
 			{
 				//move player
-				Command newCommand = Command(gridX, gridY);
+				Command newCommand = Command(gridX, gridY, nullptr, nullptr, 0, 0, FVector().ZeroVector);
 				currentCommands.Add(newCommand);
 				UE_LOG(LogTemp, Warning, TEXT("ADD COMMAND: %d, %d"), gridX, gridY);
 				MovePlayer(x, y);

@@ -9,6 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGridHit, APoolGridObject*, PoolActor);
 
+class ASnowball;
 
 UCLASS()
 class TURNBASEDGAME_API APoolGridObject : public AActor
@@ -26,6 +27,9 @@ public:
 	void SetGridIndex(int x, int y);
 	void SetIsBlocked(bool i_isBlocked);
 	void CheckGrid();
+	void SetSnowball(ASnowball* i_snowball);
+	ASnowball* GetSnowball();
+	ASnowball* snowball;
 
 	bool IsActive();
 	bool IsBlocked();

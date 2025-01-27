@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "GridPool.h"
 #include "PoolGridObject.h"
 
 // Sets default values
@@ -35,6 +36,17 @@ void APoolGridObject::CheckGrid()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CHECK GRID"));
 	OnGridHit.Broadcast(this);
+}
+
+void APoolGridObject::SetSnowball(ASnowball* i_snowball)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("SET SNOWBALL"));
+	snowball = i_snowball;
+}
+
+ASnowball* APoolGridObject::GetSnowball()
+{
+	return snowball;
 }
 
 bool APoolGridObject::IsActive()
