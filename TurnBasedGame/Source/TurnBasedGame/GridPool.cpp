@@ -70,6 +70,25 @@ TArray<TArray<APoolGridObject*>> UGridPool::GetGrid()
 	return grid;
 }
 
+void UGridPool::AddSnowball(int i_x, int i_y, ASnowball* i_snowball)
+{
+	grid[i_x][i_y]->SetSnowball(i_snowball);
+}
+
+void UGridPool::RemoveSnowball(int i_x, int i_y)
+{
+	grid[i_x][i_y]->SetSnowball(nullptr);
+}
+
+bool UGridPool::CheckSnowball(int i_x, int i_y, int i_moveX, int i_moveY)
+{
+	if (grid[i_x][i_y]->GetSnowball() != nullptr)
+	{
+		return grid[i_x][i_y]->GetSnowball()->CheckCanMove(i_moveX, i_moveY);
+	}
+	return false;
+}
+
 // Called when the game starts
 void UGridPool::BeginPlay()
 {

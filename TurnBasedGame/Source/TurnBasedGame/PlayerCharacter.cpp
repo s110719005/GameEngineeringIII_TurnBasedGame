@@ -104,6 +104,20 @@ bool APlayerCharacter::CheckNextMove(int i_x, int i_y)
 				UE_LOG(LogTemp, Warning, TEXT("BLOCKED!"));
 				return false; 
 			}
+			else if (gridReference->GetGrid()[x][y]->GetSnowball() != nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("HAS BALL"));
+				if (gridReference->CheckSnowball(x, y, i_x, i_y))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("MOVE BOTH"));
+					gridReference->GetGrid()[x][y]->GetSnowball()->Move(x + i_x , y + i_y);
+					Command newCommand = Command(gridX, gridY);
+					currentCommands.Add(newCommand);
+					MovePlayer(x, y);
+					return true;
+				}
+				else { return false; }
+			}
 			else
 			{
 				//move player

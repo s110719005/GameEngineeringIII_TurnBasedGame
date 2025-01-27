@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "PoolGridObject.h"
+#include "Snowball.h"
 #include "GridPool.generated.h"
+
+
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -39,6 +42,10 @@ public:
 	void OnGridHit(APoolGridObject* gridActor);
 
 	TArray<TArray<APoolGridObject*>> GetGrid();
+
+	void AddSnowball(int i_x, int i_y, ASnowball* i_snowball);
+	void RemoveSnowball(int i_x, int i_y);
+	bool CheckSnowball(int i_x, int i_y, int i_moveX, int i_moveY);
 
 protected:
 	// Called when the game starts
