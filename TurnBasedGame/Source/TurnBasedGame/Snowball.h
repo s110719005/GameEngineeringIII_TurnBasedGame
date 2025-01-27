@@ -25,8 +25,10 @@ public:
 	// Sets default values for this actor's properties
 	ASnowball();
 	bool CheckCanMove(int i_x, int i_y);
-	void Move(int i_x, int i_y);
+	ASnowball* Move(int i_x, int i_y);
 	void GrowSnowBall();
+	int GridX();
+	int GridY();
 
 protected:
 	// Called when the game starts or when spawned

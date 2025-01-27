@@ -12,10 +12,31 @@ class Command
 public:
 	int moveX;
 	int moveY;
-	Command(int x, int y)
+	int snowballMoveX;
+	int snowballMoveY;
+	ASnowball* hiddenSnowball;
+	ASnowball* movingSnowball;
+	FVector movingSnowballSize;
+	//scale
+
+	Command(int x, int y, ASnowball* i_hiddenSnowball, ASnowball* i_movingSnowball, int i_snowballX, int i_snowballY, FVector i_movingSnowballSize)
 	{
 		moveX = x;
 		moveY = y;
+		hiddenSnowball = i_hiddenSnowball;
+		movingSnowball = i_movingSnowball;
+		snowballMoveX = i_snowballX;
+		snowballMoveY = i_snowballY;
+		movingSnowballSize = i_movingSnowballSize;
+	}
+	Command()
+	{
+		moveX = 0;
+		moveY = 0;
+		hiddenSnowball = nullptr;
+		movingSnowball = nullptr;
+		snowballMoveX = 0;
+		snowballMoveY = 0;
 	}
 };
 

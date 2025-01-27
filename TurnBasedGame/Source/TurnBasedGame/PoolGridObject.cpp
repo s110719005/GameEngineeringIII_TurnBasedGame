@@ -40,7 +40,7 @@ void APoolGridObject::CheckGrid()
 
 void APoolGridObject::SetSnowball(ASnowball* i_snowball)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SET SNOWBALL"));
+	//UE_LOG(LogTemp, Warning, TEXT("SET SNOWBALL"));
 	snowball = i_snowball;
 }
 

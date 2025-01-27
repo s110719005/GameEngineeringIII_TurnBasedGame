@@ -40,28 +40,41 @@ bool ASnowball::CheckCanMove(int i_x, int i_y)
 	return false;
 }
 
-void ASnowball::Move(int i_x, int i_y)
+ASnowball* ASnowball::Move(int i_x, int i_y)
 {
+	//if hit another snowball
+	ASnowball* snowball = gridReference->GetGrid()[i_x][i_y]->GetSnowball();
 	gridReference->RemoveSnowball(gridX, gridY);
-	if (gridReference->GetGrid()[i_x][i_y]->GetSnowball() != nullptr)
+	if (snowball != nullptr)
 	{
-		if (gridReference->GetGrid()[i_x][i_y]->GetSnowball()->GetActorScale3D().X > this->GetActorScale3D().X)
+		if (snowball->GetActorScale3D().X > this->GetActorScale3D().X)
 		{
-			this->SetActorScale3D(gridReference->GetGrid()[i_x][i_y]->GetSnowball()->GetActorScale3D());
+			this->SetActorScale3D(snowball->GetActorScale3D());
 		}
-		gridReference->GetGrid()[i_x][i_y]->GetSnowball()->SetActorHiddenInGame(true);
+		snowball->SetActorHiddenInGame(true);
 		GrowSnowBall();
 	}
 	gridX = i_x;
 	gridY = i_y;
 	gridReference->AddSnowball(gridX, gridY, this);
 	this->SetActorLocation(FVector(100 * i_x, 100 * i_y, 50));
+	return snowball;
 }
 
 void ASnowball::GrowSnowBall()
 {
 	UE_LOG(LogTemp, Warning, TEXT("GROW"));
 	this->SetActorScale3D(this->GetActorScale() + FVector(0.3f, 0.3f, 0.3f));
+}
+
+int ASnowball::GridX()
+{
+	return gridX;
+}
+
+int ASnowball::GridY()
+{
+	return gridY;
 }
 
 // Called when the game starts or when spawned
